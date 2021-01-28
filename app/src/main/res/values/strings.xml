@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">TellSomeOne-C19</string>
+    <string name="title_activity_main">TellSomeOne-C19</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="location_permission_required">This app needs to be granted the location permission in order to use bluetooth.</string>
+    <string name="location_permission_grant_permission">Ask again</string>
+
+    <string name="contact_logger_title">Log Contacts</string>
+
+    <string name="infected_info_title">Infected Info</string>
+    <string name="infected_info">You have been in potential contact with an infected. Please get yourself tested. More details:</string>
+    <string name="infected_info_contact_time">Approximate contact time:</string>
+    <string name="infected_info_contact_duration">Approximate contact duration:</string>
+    <string name="infected_info_link"><![CDATA[<a href="https://www.116117.de/de/coronavirus.php">Information about getting tested</a>]]></string>
+    
+    <string name="notification_title">COVID-19 contact tracing</string>
+    <string name="notification_message">COVID-19 contact tracing is active</string>
+    <string name="notification_channel">Notifications about COVID-19 contact tracing activity</string>
+
+    <string name="encountered_infections">Encountered infections</string>
+    <string name="verified">verified</string>
+    <string name="unverified">unverified</string>
+    <string name="detected_devices">Detected devices</string>
+
+    <string name="main_status_ok">We have currently no data that indicates you had contact with an infected person</string>
+
+
+    <string name="dataprotection_title">Data protection information</string>
+    <string name="dataprotection_ok">Quit</string>
+    <string name="dataprotection_content"><![CDATA[
+
+        This app collects the contacts you have with others to inform you if you had contact with
+        a potential infected or to inform others of your potential infection. This data collection
+        is done as privacy conscious as possible:
+        <br>
+        <br>
+        <ul>
+            <li>Data is collected locally on your phone and <u>only</u> leaves your phone when you are infected </li>
+            <li>Contact data is anonymized</li>
+            <!—<li>Contact data older than two weeks is deleted</li>-->
+        </ul>
+        <br>
+        <a href="https://bandemic.app/privacy">More information</a>
+
+    ]]></string>
+    <string name="main_no_devices">There are currently no active devices in close proximity</string>
+
+    <string name="instructions_title">How it works</string>
+    <string name="instructions_how_to">How it works.</string>
+    <string name="instructions_turn_on_bluetooth">Turn on bluetooth</string>
+    <string name="instructions_nearby">Your device will trace other devices in your vicinity</string>
+    <string name="instructions_infected">When somebody gets infected that you met, you\'ll get a notification with further instructions</string>
+    <string name="error_bluetooth_not_enabled">Bluetooth needs to be enabled to be able to scan for nearby devices</string>
+    <string name="error_location_not_enabled">Location access needs to be enabled to scan for nearby devices</string>
+</resources>
