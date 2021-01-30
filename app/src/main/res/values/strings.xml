@@ -19,7 +19,7 @@
     <string name="infected_info">You have been in potential contact with an infected. Please get yourself tested. More details:</string>
     <string name="infected_info_contact_time">Approximate contact time:</string>
     <string name="infected_info_contact_duration">Approximate contact duration:</string>
-    <string name="infected_info_link"><![CDATA[<a href="https://www.116117.de/de/coronavirus.php">Information about getting tested</a>]]></string>
+    <string name="infected_info_link"><![CDATA[<a href="http://www.mohcc.gov.zw/">Information about getting tested</a>]]></string>
     
     <string name="notification_title">COVID-19 contact tracing</string>
     <string name="notification_message">COVID-19 contact tracing is active</string>
@@ -48,7 +48,7 @@
             <!—<li>Contact data older than two weeks is deleted</li>-->
         </ul>
         <br>
-        <a href="https://bandemic.app/privacy">More information</a>
+        <a href="http://www.mohcc.gov.zw/">More information</a>
 
     ]]></string>
     <string name="main_no_devices">There are currently no active devices in close proximity</string>
