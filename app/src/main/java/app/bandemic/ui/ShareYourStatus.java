@@ -17,8 +17,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static java.lang.String.*;
-
 public class ShareYourStatus extends AppCompatActivity {
     EditText enterPinTextBox=null;
     Button shareStatusBtn=null;
@@ -31,7 +29,7 @@ public class ShareYourStatus extends AppCompatActivity {
         setContentView(R.layout.share_your_status);
         enterPinTextBox=(EditText)findViewById(R.id.pin);
         shareStatusBtn=(Button)findViewById(R.id.push_ids);
-        String enteredPin= enterPinTextBox.getText().toString();
+        String enteredPin= enterPinTextBox.getText().toString().trim();
         db= Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "bandemic_database").build();
 
