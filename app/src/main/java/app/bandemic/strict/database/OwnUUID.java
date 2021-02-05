@@ -14,6 +14,9 @@ public class OwnUUID {
     public UUID ownUUID;
     public Date timestamp;
 
+    public OwnUUID() {
+    }
+
     public OwnUUID(@NonNull UUID ownUUID, Date timestamp) {
         this.ownUUID = ownUUID;
         this.timestamp = timestamp;
