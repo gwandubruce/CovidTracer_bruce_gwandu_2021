@@ -9,19 +9,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
+
 import app.bandemic.R;
 import app.bandemic.strict.database.AppDatabase;
+import app.bandemic.strict.database.OwnUUID;
 import app.bandemic.strict.network.OwnUUIDResponse;
-import app.bandemic.strict.network.RetrofitClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import app.bandemic.strict.repository.BroadcastRepository;
 
 public class ShareYourStatus extends AppCompatActivity {
     EditText enterPinTextBox=null;
     Button shareStatusBtn=null;
+    private DatabaseReference mDatabase;
 
-    AppDatabase db =null;
+    AppDatabase localDb =null;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +34,16 @@ public class ShareYourStatus extends AppCompatActivity {
         enterPinTextBox=(EditText)findViewById(R.id.pin);
         shareStatusBtn=(Button)findViewById(R.id.push_ids);
         String enteredPin= enterPinTextBox.getText().toString().trim();
-        db= Room.databaseBuilder(getApplicationContext(),
+        localDb= Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "bandemic_database").build();
+        mDatabase= FirebaseDatabase.getInstance().getReference().child("IDs_From_Patients");
 
         shareStatusBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (enteredPin==("Covid")){
 
-                    postOwnIds(createOwnUUIDResponse());
+                    postOwnIds();
                    // startActivity(new Intent(ShareYourStatus.this, DataProtectionInfo.class));
                 }else{
 
@@ -54,37 +59,45 @@ public class ShareYourStatus extends AppCompatActivity {
 
     public OwnUUIDResponse createOwnUUIDResponse(){
         OwnUUIDResponse ids = new OwnUUIDResponse();
-                        ids.setData(db.ownUUIDDao().getAll().getValue());
+                        ids.setData(localDb.ownUUIDDao().getAll().getValue());
                         return ids;
 
     }
+    public void postOwnIds() {
+        //List<OwnUUID> data = new BroadcastRepository(getApplication()).getAllOwnUUIDs().getValue();
+//        OwnUUIDResponse ownUUIDResponse = new OwnUUIDResponse(data);
+        OwnUUIDResponse ownUUIDResponse = createOwnUUIDResponse();
 
-
-    public void postOwnIds(OwnUUIDResponse ownUUIDResponse){
-
-Call<OwnUUIDResponse> OwnIdPostCall= RetrofitClient.postOwnIdsToWebservice().postOwnUUIDResponse(ownUUIDResponse);
-        OwnIdPostCall.enqueue(new Callback<OwnUUIDResponse>(){
-
-
-            @Override
-            public void onResponse(Call<OwnUUIDResponse> call, Response<OwnUUIDResponse> response) {
-                if(response.isSuccessful()){
-
-                    Toast.makeText(ShareYourStatus.this,"Shared Successfully!",Toast.LENGTH_LONG).show();
-                }else{
-
-                    Toast.makeText(ShareYourStatus.this,"Error...!",Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<OwnUUIDResponse> call, Throwable t) {
-                Toast.makeText(ShareYourStatus.this,"Error...!"+t.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-
-            }
-        });
+        mDatabase.push().setValue(ownUUIDResponse);
     }
+
+
+//    public void postOwnIds(OwnUUIDResponse ownUUIDResponse){
+//
+//Call<OwnUUIDResponse> OwnIdPostCall= RetrofitClient.postOwnIdsToWebservice().postOwnUUIDResponse(ownUUIDResponse);
+//        OwnIdPostCall.enqueue(new Callback<OwnUUIDResponse>(){
+//
+//
+//            @Override
+//            public void onResponse(Call<OwnUUIDResponse> call, Response<OwnUUIDResponse> response) {
+//                if(response.isSuccessful()){
+//
+//                    Toast.makeText(ShareYourStatus.this,"Shared Successfully!",Toast.LENGTH_LONG).show();
+//                }else{
+//
+//                    Toast.makeText(ShareYourStatus.this,"Error...!",Toast.LENGTH_LONG).show();
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<OwnUUIDResponse> call, Throwable t) {
+//                Toast.makeText(ShareYourStatus.this,"Error...!"+t.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+//    }
+
 
 //    public void onShareStatusClick(View v) {
 //        startActivity(new Intent(this, DataProtectionInfo.class));
