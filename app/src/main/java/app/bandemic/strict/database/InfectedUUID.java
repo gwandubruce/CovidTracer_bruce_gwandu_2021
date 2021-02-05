@@ -1,12 +1,13 @@
 package app.bandemic.strict.database;
 
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
+@IgnoreExtraProperties
 @Entity
 public class InfectedUUID {
     @PrimaryKey
@@ -20,6 +21,9 @@ public class InfectedUUID {
     public byte[] hashedId; // this is actually double hashed
     @SerializedName("icd_code")
     public String icdCode;
+
+    public InfectedUUID() {
+    }
 
     public InfectedUUID(
             int id,
