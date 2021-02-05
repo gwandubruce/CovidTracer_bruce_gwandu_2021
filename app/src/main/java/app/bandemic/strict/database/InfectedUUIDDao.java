@@ -24,7 +24,7 @@ public interface InfectedUUIDDao {
     // TODO: change != to =, this is just for demo!!!!
     @Query("SELECT infecteduuid.id, beacon.timestamp, distance, createdOn, distrustLevel, icdCode" +
             " FROM infecteduuid JOIN beacon ON" +
-            " infecteduuid.hashedId = beacon.receivedDoubleHash")  // this is where we compare infected ids and receved beacon id and pull all such data
+            " infecteduuid.hashedId = beacon.receivedDoubleHash")  // this is where we compare infected ids and locally received beacons id and pull all such data
     LiveData<List<Infection>> getPossiblyInfectedEncounters();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
