@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1045110386337",
+    "project_id": "infectiontracker-225c8",
+    "storage_bucket": "infectiontracker-225c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045110386337:android:157f0b535d6b14d1dd8ae0",
+        "android_client_info": {
+          "package_name": "app.bandemic.InfectionTracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045110386337-j47is8s49pfj9hj3r056a8aqu6pptsrr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.bandemic.InfectionTracker",
+            "certificate_hash": "8af388311768f4bb93830dfeea02531b87566d3a"
+          }
+        },
+        {
+          "client_id": "1045110386337-31f0ist17kgm7h0h5lldgb7haus6jnai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv7QuoiS5ie1P2kmhZLLZdZHtUbaxdhZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045110386337-31f0ist17kgm7h0h5lldgb7haus6jnai.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
