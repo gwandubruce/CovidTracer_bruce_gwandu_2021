@@ -1,10 +1,12 @@
 package app.bandemic.strict.repository;
 
 import android.app.Application;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 
 import com.google.firebase.database.ChildEventListener;
@@ -15,15 +17,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import app.bandemic.strict.database.AppDatabase;
 import app.bandemic.strict.database.InfectedUUID;
@@ -43,6 +50,7 @@ import static android.content.ContentValues.TAG;
 public class InfectedUUIDRepository {
 
     private static final String LOG_TAG = "InfectedUUIDRepository";
+    private ArrayList<ShellClass> shellAllClasses = new ArrayList<>();
 
     //private final InfectionIdsWebservice webservice;
 
@@ -118,25 +126,36 @@ public class InfectedUUIDRepository {
 //                });
 //            }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 List<Object> list = new ArrayList<>();
+                ArrayList<ShellClass> shellClasses = new ArrayList<>();
+
                 snapshot.getChildrenCount();
                 //List<User> list= new ArrayList<User>();
                 GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
               //  List<Message> messages = snapshot.getValue(t);
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
                    // OwnUUIDResponse ownUUID = snapshot.getValue(OwnUUIDResponse.class);
-                   ArrayList<Object> ownUUID = childDataSnapshot.getValue(t);
-                    list.addAll(ownUUID);
+                    childDataSnapshot.getChildren().forEach(x->{
+                        String most = Objects.requireNonNull(x.child("ownUUID").child("mostSignificantBits").getValue()).toString();
+                        String least = Objects.requireNonNull(x.child("ownUUID").child("leastSignificantBits").getValue()).toString();
+                        String timestampDate = Objects.requireNonNull(x.child("timestamp").child("date").getValue()).toString();
+                        String timestampDay  = Objects.requireNonNull(x.child("timestamp").child("day").getValue()).toString();
+                        shellAllClasses.add(new ShellClass(most,least,timestampDate,timestampDay));
+                        shellClasses.add(new ShellClass(most,least,timestampDate,timestampDay));
+                    });
                 }
 
 
-                System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
+//                System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
 
                 AppDatabase.databaseWriteExecutor.execute(() -> {
-                    if(list != null) {
-                        infectedUUIDDao.insertAll(list.toArray(new InfectedUUID[list.size()]));
+
+                    if(shellClasses != null) {
+                        //use shellClass getters
+                        //infectedUUIDDao.insertAll(list.toArray(new InfectedUUID[list.size()]));
                     }
                     else {
                         // TODO: error handling!
@@ -223,4 +242,52 @@ public class InfectedUUIDRepository {
         // TODO look up transmit power for current device
         return (byte) -65;
     }
+}
+
+class ShellClass{
+    private String most;
+    private String least;
+
+    public String getMost() {
+        return most;
+    }
+
+    public void setMost(String most) {
+        this.most = most;
+    }
+
+    public String getLeast() {
+        return least;
+    }
+
+    public void setLeast(String least) {
+        this.least = least;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    private String date;
+    private String day;
+
+    ShellClass(String most,String least,String date,String day){
+        this.most = most;
+        this.least = least;
+        this.date = date;
+        this.day = day;
+    }
+
 }
