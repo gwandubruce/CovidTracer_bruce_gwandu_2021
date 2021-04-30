@@ -7,6 +7,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
 import com.google.firebase.database.DatabaseReference;
@@ -19,11 +21,14 @@ import app.bandemic.strict.database.AppDatabase;
 import app.bandemic.strict.database.OwnUUID;
 import app.bandemic.strict.network.OwnUUIDResponse;
 import app.bandemic.strict.repository.BroadcastRepository;
+import app.bandemic.viewmodel.EnvironmentLoggerViewModel;
 
 public class ShareYourStatus extends AppCompatActivity {
   private EditText enterPinTextBox;
    private Button shareStatusBtn;
     private DatabaseReference mDatabase;
+    private EnvironmentLoggerViewModel mViewModel;
+    private List<OwnUUID> listData;
 
     AppDatabase localDb =null;
 
@@ -56,6 +61,23 @@ public class ShareYourStatus extends AppCompatActivity {
 //            }
 //        });
 
+        mViewModel = new ViewModelProvider(this).get(EnvironmentLoggerViewModel.class);
+        // cardView.setCardBackgroundColor(getResources().getColor(R.color.colorNoDanger));
+
+        // Create the observer which updates the UI.
+        final Observer<List<OwnUUID>> nameObserver =new Observer<List<OwnUUID>>() {
+            @Override
+            public void onChanged(List<OwnUUID> ownUUIDList) {
+                listData=ownUUIDList;
+
+            }
+        };
+
+
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        mViewModel.getAllOwnUUIDs().observe(this, nameObserver);
+
+
     }
 
 
@@ -68,9 +90,9 @@ public class ShareYourStatus extends AppCompatActivity {
     public void postOwnIds() {
         //List<OwnUUID> data = new BroadcastRepository(getApplication()).getAllOwnUUIDs().getValue();
 //        OwnUUIDResponse ownUUIDResponse = new OwnUUIDResponse(data);
-        OwnUUIDResponse ownUUIDResponse = createOwnUUIDResponse();
+//        OwnUUIDResponse ownUUIDResponse = createOwnUUIDResponse();
 
-        mDatabase.push().setValue(ownUUIDResponse);
+        mDatabase.push().setValue(listData);
 
     }
 

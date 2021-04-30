@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import app.bandemic.strict.database.Beacon;
+import app.bandemic.strict.database.OwnUUID;
 import app.bandemic.strict.repository.BroadcastRepository;
 
 public class EnvironmentLoggerViewModel extends AndroidViewModel {
@@ -27,6 +28,10 @@ public class EnvironmentLoggerViewModel extends AndroidViewModel {
 
     public LiveData<List<Beacon>> getDistinctBeacons() {
         return mDistinctBeacons;
+    }
+
+    public LiveData<List<OwnUUID>> getAllOwnUUIDs() {
+        return mBroadcastRepository.getAllOwnUUIDs();
     }
 }
 
