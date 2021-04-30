@@ -15,8 +15,8 @@
 //    private static InfectionIdsWebservice webservice = null;
 //    private static OwnIdsWebService webservice2 = null;
 //    // there was an online something url
-//    public static final String BASE_URL = "http://localhost:8080/api/"; // does it have to be this or "/api/v1/app/result" ? no the methods should have that one
-//    public static final String BASE_URL2 = "http://localhost:8080/api/";
+//    public static final String BASE_URL = "https://covidtracker-a95fb-default-rtdb.firebaseio.com/"; // does it have to be this or "/api/v1/app/result" ? no the methods should have that one
+//    public static final String BASE_URL2 = "https://covidtracker-a95fb-default-rtdb.firebaseio.com/";
 //
 //    // should this be synchronized?
 //    public static InfectionIdsWebservice getInfectionchainWebservice() {

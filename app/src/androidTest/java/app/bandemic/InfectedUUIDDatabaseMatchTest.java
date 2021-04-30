@@ -72,7 +72,7 @@ public class InfectedUUIDDatabaseMatchTest {
         Beacon beacon = new Beacon(
                 hash,
                 new Date(),
-                12
+                12,1
         );
 
         infectedUUIDDao.insertAll(infected);

@@ -6,9 +6,10 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "app.bandemic.InfectionTracker"
+        applicationId "com.mohcc.CovidTracker"
         minSdkVersion 16
         targetSdkVersion 30
+        multiDexEnabled true
         versionCode 1
         versionName "0.1"
 
@@ -31,6 +32,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.firebase:firebase-auth:20.0.2'
 
     // Room
     def room_version = '2.2.6'
@@ -43,7 +45,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     // to log the request header and the request body
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
 
     implementation 'commons-codec:commons-codec:20041127.091804'
     // added from youtube
@@ -52,13 +54,15 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.navigation:navigation-fragment:2.3.3'
     implementation 'androidx.navigation:navigation-ui:2.3.3'
     implementation platform('com.google.firebase:firebase-bom:26.4.0')
    implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-database'
+    //implementation 'com.google.android.gms:play-services-basement:17.6.0'
+    //implementation'com.google.firebase:firebase-messaging'
     //implementation 'com.google.firebase:firebase-crashlytics'
     //implementation 'com.firebase:firebase-client-android'
     
@@ -66,6 +70,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
 
     def dynamicanimation_version = "1.0.0"
     implementation "androidx.dynamicanimation:dynamicanimation:$dynamicanimation_version"

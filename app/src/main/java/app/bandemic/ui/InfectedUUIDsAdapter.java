@@ -49,7 +49,7 @@ public class InfectedUUIDsAdapter extends RecyclerView.Adapter<InfectedUUIDsAdap
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull InfectedUUIDsViewHolder holder, int position) {
-        Infection infection = infectedUUIDs.get(position);
+        Infection infection = infectedUUIDs.get(position); // list is set on line 70
         Context c = holder.layout.getContext();
 
         java.text.DateFormat df = DateFormat.getDateFormat(c);
@@ -67,7 +67,7 @@ public class InfectedUUIDsAdapter extends RecyclerView.Adapter<InfectedUUIDsAdap
     }
 
     public void setInfectedUUIDs(List<Infection> uuids) {
-        this.infectedUUIDs = uuids;
+        this.infectedUUIDs = uuids; // the list is set here
         notifyDataSetChanged();
     }
 // we can use this method to determine when a person was recently exposed to corona

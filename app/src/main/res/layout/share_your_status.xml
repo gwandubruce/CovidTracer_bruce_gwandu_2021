@@ -44,20 +44,6 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView4"
         tools:ignore="RtlCompat" />
 
-    <EditText
-        android:id="@+id/pin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5"
-        tools:ignore="RtlCompat"
-        style="@style/Widget.AppCompat.EditText"/>
-
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="0dp"
@@ -114,10 +100,25 @@
         android:layout_marginEnd="150dp"
         android:layout_marginBottom="30dp"
         android:text="Share Status"
+        android:onClick="onShareYourStatus"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView6"
         app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="124dp"
+        android:layout_marginRight="124dp"
+        android:ems="10"
+        android:hint="Password..."
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/push_ids"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.883" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

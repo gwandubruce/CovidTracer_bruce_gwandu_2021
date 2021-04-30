@@ -30,7 +30,7 @@ public class BroadcastRepository {
         mBeaconDao = db.beaconDao();
         mAllOwnUUIDs = mOwnUUIDDao.getAll();
         mAllBeacons = mBeaconDao.getAll();
-        mDistinctBeacons = mBeaconDao.getAllDistinctBroadcast();
+        mDistinctBeacons = mBeaconDao.getAllDistinctBroadcast(); // this is not different to mBeaconDao.getAll();
     }
 
     public LiveData<List<OwnUUID>> getAllOwnUUIDs() {

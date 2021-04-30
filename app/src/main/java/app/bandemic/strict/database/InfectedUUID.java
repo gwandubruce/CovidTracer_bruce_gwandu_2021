@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey;
 @IgnoreExtraProperties
 @Entity
 public class InfectedUUID {
+
     @PrimaryKey
     @SerializedName("id")
     public int id;

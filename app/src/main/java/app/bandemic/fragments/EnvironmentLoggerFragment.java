@@ -68,7 +68,7 @@ public class EnvironmentLoggerFragment extends Fragment {
                 mAdapter.setBeacons(beacons);
                 noInfectionInformation.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
-                if (beacons.size() >= 5) { //todo change to 5 (1 only for testing)
+                if (beacons.size() >= 1) { //todo change to 5 (1 only for testing)
                     cardView.setCardBackgroundColor(getResources().getColor(R.color.colorDanger));
                 } else if (beacons.size() > 10) {
                     cardView.setCardBackgroundColor(getResources().getColor(R.color.colorRealDanger));

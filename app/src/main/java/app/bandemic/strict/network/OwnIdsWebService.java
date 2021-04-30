@@ -6,6 +6,6 @@
 //
 //public interface OwnIdsWebService {
 //
-//    @POST("/api/v1/app/result")
+//    @POST("IDs.json")
 //    Call<OwnUUIDResponse> postOwnUUIDResponse(@Body OwnUUIDResponse ownUUIDResponse);
 //}

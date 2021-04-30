@@ -21,8 +21,8 @@ import app.bandemic.strict.network.OwnUUIDResponse;
 import app.bandemic.strict.repository.BroadcastRepository;
 
 public class ShareYourStatus extends AppCompatActivity {
-    EditText enterPinTextBox=null;
-    Button shareStatusBtn=null;
+  private EditText enterPinTextBox;
+   private Button shareStatusBtn;
     private DatabaseReference mDatabase;
 
     AppDatabase localDb =null;
@@ -31,31 +31,33 @@ public class ShareYourStatus extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.share_your_status);
-        enterPinTextBox=(EditText)findViewById(R.id.pin);
+        enterPinTextBox=(EditText)findViewById(R.id.pass);
         shareStatusBtn=(Button)findViewById(R.id.push_ids);
-        String enteredPin= enterPinTextBox.getText().toString().trim();
+
         localDb= Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "bandemic_database").build();
-        mDatabase= FirebaseDatabase.getInstance().getReference().child("IDs_From_Patients");
+        mDatabase= FirebaseDatabase.getInstance().getReference().child("ListOfOwnUUID_Objects");
 
-        shareStatusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (enteredPin==("Covid")){
-
-                    postOwnIds();
-                   // startActivity(new Intent(ShareYourStatus.this, DataProtectionInfo.class));
-                }else{
-
-                    Toast.makeText(ShareYourStatus.this,"Test Result Code Incorrect...!",Toast.LENGTH_LONG).show();
-
-                }
-                finish();
-
-            }
-        });
+//        shareStatusBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String enteredPin= enterPinTextBox.getText().toString().trim();
+//                if (enteredPin==("Covid")){
+//
+//                    postOwnIds();
+//                   // startActivity(new Intent(ShareYourStatus.this, DataProtectionInfo.class));
+//                }else{
+//
+//                    Toast.makeText(ShareYourStatus.this,"Test Result Code Incorrect...!",Toast.LENGTH_LONG).show();
+//
+//                }
+//                finish();
+//
+//            }
+//        });
 
     }
+
 
     public OwnUUIDResponse createOwnUUIDResponse(){
         OwnUUIDResponse ids = new OwnUUIDResponse();
@@ -69,6 +71,21 @@ public class ShareYourStatus extends AppCompatActivity {
         OwnUUIDResponse ownUUIDResponse = createOwnUUIDResponse();
 
         mDatabase.push().setValue(ownUUIDResponse);
+
+    }
+
+    public void onShareYourStatus(View view) {
+        String enteredPin= enterPinTextBox.getText().toString().trim();
+        if (enteredPin.equalsIgnoreCase("Covid")){
+
+            postOwnIds();
+            // startActivity(new Intent(ShareYourStatus.this, DataProtectionInfo.class));
+        }else{
+
+            Toast.makeText(ShareYourStatus.this,"Test Result Code Incorrect...!",Toast.LENGTH_LONG).show();
+
+        }
+        finish();
     }
 
 

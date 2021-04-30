@@ -37,8 +37,8 @@ public class NearbyDevicesFragment extends Fragment {
 
     private RelativeLayout layout;
 
-    private final List<NearbyDeviceView> nearbyDeviceViews = new ArrayList<>(); // customized view with image and animations
-    public NearbyDevicesViewModel model; // distances dada chete chete in stored in array by this view model
+    private final List<NearbyDeviceView> nearbyDeviceViews = new ArrayList<>(); // customized view with image and animations..private inner class on line 80
+    public NearbyDevicesViewModel model; // distances dada chete chete in stored in array by this view model..initialized to 0 elements
 
 
     @Override
@@ -55,7 +55,7 @@ public class NearbyDevicesFragment extends Fragment {
         model = new ViewModelProvider(this).get(NearbyDevicesViewModel.class); // viewModel monitoring distances of neighbors
         layout = view.findViewById(R.id.layout);
 
-        updateDevicePositions(requireNonNull(model.distances.getValue())); // this requireNonNull ????????
+        updateDevicePositions(requireNonNull(model.distances.getValue())); //  method is implemented on 121
         skipAnimations();
 
         model.distances.observe(getViewLifecycleOwner(), this::updateDevicePositions);

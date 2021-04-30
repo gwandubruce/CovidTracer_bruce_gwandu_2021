@@ -8,6 +8,6 @@
 //    //"/api/v1/app/result"
 //    //  .... "strict/items/infected_ids"  this is the replaced URL
 //
-//    @GET("/api/v1/app/results")
+//    @GET("IDs.json")
 //    Call<InfectedUUIDResponse> getInfectedUUIDResponse();
 //}

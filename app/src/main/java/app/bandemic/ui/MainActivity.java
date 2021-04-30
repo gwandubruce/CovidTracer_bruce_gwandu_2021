@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import app.bandemic.R;
@@ -26,23 +24,21 @@ import app.bandemic.fragments.ErrorMessageFragment;
 import app.bandemic.fragments.NearbyDevicesFragment;
 import app.bandemic.strict.service.BeaconCache;
 import app.bandemic.strict.service.TracingService;
+
 import app.bandemic.viewmodel.MainActivityViewModel;
-// java.lang.RuntimeException: Unable to stop activity {app.bandemic/app.bandemic.ui.MainActivity}: java.lang.NullPointerException: Attempt to invoke virtual method 'java.util.List app.bandemic.strict.service.BeaconCache.getNearbyDevicesListeners()' on a null object reference
-//        at android.app.ActivityThread.performStopActivityInner(ActivityThread.java:3837)
+
+
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MainActivity extends AppCompatActivity {
 
     boolean mBound = false;
-
     private static final String TAG = "MainActivity";
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     public static final String PREFERENCE_DATA_OK = "data_ok";
-
     private MainActivityViewModel mViewModel;
     private NearbyDevicesFragment nearbyDevicesFragment;
     private TracingService myService ;
-    private TracingService.ServiceStatusListener serviceStatusListener;
-    BeaconCache.NearbyDevicesListener nearbyDevicesListener;
+    private TracingService.TracingServiceBinder serviceBinder;
     private ServiceConnection connection;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -50,11 +46,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        // Bind to LocalService
+//        Intent intent = new Intent(MainActivity.this, Route.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+
+        // Bind to LocalService
 //        Intent intent = new Intent(this, TracingService.class);
 //        startService(intent);
 //        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        onShareStatusClick();
+//        //onShareStatusClick();
 
 
         connection = new ServiceConnection() {
@@ -65,60 +65,68 @@ public class MainActivity extends AppCompatActivity {
                 //service = (TracingService.TracingServiceBinder) service;
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
                 TracingService.TracingServiceBinder binder = (TracingService.TracingServiceBinder) service;
-                myService = binder.getService();
+                myService = binder.getService(); // should this go ?
                 mBound = true;
+                serviceBinder = (TracingService.TracingServiceBinder) service;
 
-                myService.addServiceStatusListener(serviceStatusListener);
-                serviceStatusListener.serviceStatusChanged(myService.getServiceStatus());
 
-                myService.addNearbyDevicesListener();
+
+                serviceBinder.addServiceStatusListener(serviceStatusListener);
+                serviceStatusListener.serviceStatusChanged(serviceBinder.getServiceStatus());
+
+                serviceBinder.addNearbyDevicesListener();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
                 Log.i(TAG, "Service disconnected");
-                myService = null;          // tichada kupaona
+                serviceBinder = null;          // tichada kupaona
+                myService=null;
             }
         };
+//        Intent intent=new Intent(this,TracingService.class);
+//        startService(intent);
+//        bindService(intent,connection,Context.BIND_AUTO_CREATE);
+
         nearbyDevicesFragment=new NearbyDevicesFragment();
         mViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         myService=new TracingService();
-        nearbyDevicesListener = distances -> runOnUiThread(() -> {
-            if (nearbyDevicesFragment != null) {
-                nearbyDevicesFragment.model.distances.setValue(distances);
-            }
-        });
-        serviceStatusListener = serviceStatus -> {
-            Log.i(TAG, "Service status: " + serviceStatus);
-            runOnUiThread(() -> {
-                if (serviceStatus == TracingService.STATUS_RUNNING) {
-                    if (nearbyDevicesFragment == null) {
-                        nearbyDevicesFragment = new NearbyDevicesFragment();
-                    }
-                    if (nearbyDevicesFragment.model != null) {
-                        nearbyDevicesFragment.model.distances.setValue(myService.getNearbyDevices());
-                    }
-                    nearbyDevicesFragment.skipAnimations();
-
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                            .replace(R.id.fragment_nearby_devices, nearbyDevicesFragment)
-                            .commit();
-                } else {
-                    String errorMessage = "";
-                    if (serviceStatus == TracingService.STATUS_BLUETOOTH_NOT_ENABLED) {
-                        errorMessage = getString(R.string.error_bluetooth_not_enabled);
-                    } else if (serviceStatus == TracingService.STATUS_LOCATION_NOT_ENABLED) {
-                        errorMessage = getString(R.string.error_location_not_enabled);
-                    }
-                    ErrorMessageFragment errorMessageFragment = ErrorMessageFragment.newInstance(errorMessage);
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                            .replace(R.id.fragment_nearby_devices, errorMessageFragment)
-                            .commit();
-                }
-            });
-        };
+//        nearbyDevicesListener = distances -> runOnUiThread(() -> {
+//            if (nearbyDevicesFragment != null) {
+//                nearbyDevicesFragment.model.distances.setValue(distances);
+//            }
+//        });
+//        serviceStatusListener = serviceStatus -> {
+//            Log.i(TAG, "Service status: " + serviceStatus);
+//            runOnUiThread(() -> {
+//                if (serviceStatus == TracingService.STATUS_RUNNING) {
+//                    if (nearbyDevicesFragment == null) {
+//                        nearbyDevicesFragment = new NearbyDevicesFragment();
+//                    }
+//                    if (nearbyDevicesFragment.model != null) {
+//                        nearbyDevicesFragment.model.distances.setValue(serviceBinder.getNearbyDevices());
+//                    }
+//                    nearbyDevicesFragment.skipAnimations();
+//
+//                    getSupportFragmentManager().beginTransaction()
+//                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+//                            .replace(R.id.fragment_nearby_devices, nearbyDevicesFragment)
+//                            .commit();
+//                } else {
+//                    String errorMessage = "";
+//                    if (serviceStatus == TracingService.STATUS_BLUETOOTH_NOT_ENABLED) {
+//                        errorMessage = getString(R.string.error_bluetooth_not_enabled);
+//                    } else if (serviceStatus == TracingService.STATUS_LOCATION_NOT_ENABLED) {
+//                        errorMessage = getString(R.string.error_location_not_enabled);
+//                    }
+//                    ErrorMessageFragment errorMessageFragment = ErrorMessageFragment.newInstance(errorMessage);
+//                    getSupportFragmentManager().beginTransaction()
+//                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+//                            .replace(R.id.fragment_nearby_devices, errorMessageFragment)
+//                            .commit();
+//                }
+//            });
+//        };
 
         SwipeRefreshLayout refreshLayout = findViewById(R.id.main_swipe_refresh_layout);
         refreshLayout.setOnRefreshListener(() -> {
@@ -128,37 +136,15 @@ public class MainActivity extends AppCompatActivity {
             refreshLayout.setRefreshing(refreshing);
         });
 
-
-//        connection = new ServiceConnection() {
-//
-//            @Override
-//            public void onServiceConnected(ComponentName className, IBinder service) {
-//                Log.i(TAG, "Service connected");
-//                //service = (TracingService.TracingServiceBinder) service;
-//                // We've bound to LocalService, cast the IBinder and get LocalService instance
-//                TracingService.TracingServiceBinder binder = (TracingService.TracingServiceBinder) service;
-//                myService = binder.getService();
-//                mBound = true;
-//
-//                myService.addServiceStatusListener(serviceStatusListener);
-//                serviceStatusListener.serviceStatusChanged(myService.getServiceStatus());
-//
-//                myService.addNearbyDevicesListener();
-//            }
-//
-//            @Override
-//            public void onServiceDisconnected(ComponentName arg0) {
-//                Log.i(TAG, "Service disconnected");
-//                //myService = null;// tichada kupaona
-//            }
-//        };
-
         checkPermissions();
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if(!sharedPref.getBoolean(PREFERENCE_DATA_OK, false)) {
-            startActivity(new Intent(this, Instructions.class));
-        }
+        //SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+       // if(sharedPref.getBoolean(PREFERENCE_DATA_OK, false)) {
+          //  startActivity(new Intent(this, Instructions.class));
+            Intent i=new Intent(this,Instructions.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+       // }
     }
 
     private void checkPermissions() {
@@ -200,63 +186,76 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void onShareStatusClick(){
-
-        Intent intent=new Intent(MainActivity.this,Instructions.class);
-        startActivity(intent);
-
-    }
-
-//    private TracingService.ServiceStatusListener serviceStatusListener = serviceStatus -> {
-//        Log.i(TAG, "Service status: " + serviceStatus);
-//        runOnUiThread(() -> {
-//            if (serviceStatus == TracingService.STATUS_RUNNING) {
-//                if (nearbyDevicesFragment == null) {
-//                    nearbyDevicesFragment = new NearbyDevicesFragment();
-//                }
-//                if (nearbyDevicesFragment.model != null) {
-//                    nearbyDevicesFragment.model.distances.setValue(serviceBinder.getNearbyDevices());
-//                }
-//                nearbyDevicesFragment.skipAnimations();
+//    @Override
+//    public void onStart(){
+//        super.onStart();
 //
-//                getSupportFragmentManager().beginTransaction()
-//                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-//                        .replace(R.id.fragment_nearby_devices, nearbyDevicesFragment)
-//                        .commit();
-//            } else {
-//                String errorMessage = "";
-//                if (serviceStatus == TracingService.STATUS_BLUETOOTH_NOT_ENABLED) {
-//                    errorMessage = getString(R.string.error_bluetooth_not_enabled);
-//                } else if (serviceStatus == TracingService.STATUS_LOCATION_NOT_ENABLED) {
-//                    errorMessage = getString(R.string.error_location_not_enabled);
-//                }
-//                ErrorMessageFragment errorMessageFragment = ErrorMessageFragment.newInstance(errorMessage);
-//                getSupportFragmentManager().beginTransaction()
-//                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-//                        .replace(R.id.fragment_nearby_devices, errorMessageFragment)
-//                        .commit();
-//            }
-//        });
-//    };
+//        Intent intent=new Intent(MainActivity.this,Instructions.class);
+//        startActivity(intent);
+//
+//    }
 
-//    BeaconCache.NearbyDevicesListener nearbyDevicesListener = new BeaconCache.NearbyDevicesListener() {
-//        @Override
-//        public void onNearbyDevicesChanged(double[] distances) {
-//            runOnUiThread(() -> {
-//                if (nearbyDevicesFragment != null) {
-//                    nearbyDevicesFragment.model.distances.setValue(distances);
-//                }
-//            });
-//        }
-//    };
+    private TracingService.ServiceStatusListener serviceStatusListener = serviceStatus -> {
+        Log.i(TAG, "Service status: " + serviceStatus);
+        runOnUiThread(() -> {
+            if (serviceStatus == TracingService.STATUS_RUNNING) {
+                if (nearbyDevicesFragment == null) {
+                    nearbyDevicesFragment = new NearbyDevicesFragment();
+                }
+                if (nearbyDevicesFragment.model != null) {
+                    nearbyDevicesFragment.model.distances.setValue(serviceBinder.getNearbyDevices());
+                }
+                nearbyDevicesFragment.skipAnimations();
 
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(R.id.fragment_nearby_devices, nearbyDevicesFragment)
+                        .commit();
+            } else {
+                String errorMessage = "";
+                if (serviceStatus == TracingService.STATUS_BLUETOOTH_NOT_ENABLED) {
+                    errorMessage = getString(R.string.error_bluetooth_not_enabled);
+                } else if (serviceStatus == TracingService.STATUS_LOCATION_NOT_ENABLED) {
+                    errorMessage = getString(R.string.error_location_not_enabled);
+                }
+                ErrorMessageFragment errorMessageFragment = ErrorMessageFragment.newInstance(errorMessage);
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .replace(R.id.fragment_nearby_devices, errorMessageFragment)
+                        .commit();
+            }
+        });
+    };
+
+    BeaconCache.NearbyDevicesListener nearbyDevicesListener = new BeaconCache.NearbyDevicesListener() {
+        @Override
+        public void onNearbyDevicesChanged(double[] distances) {
+            runOnUiThread(() -> {
+                if (nearbyDevicesFragment != null) {
+                    nearbyDevicesFragment.model.distances.setValue(distances);
+                }
+            });
+        }
+    };
+// ndakachinja kubva kuna onStop to onDestroy
     @Override
-    protected void onStop() {
-        myService.removeNearbyDevicesListener(nearbyDevicesListener);
-        myService.removeServiceStatusListener(serviceStatusListener);
+    protected void onDestroy() {
+
+        serviceBinder.removeNearbyDevicesListener(nearbyDevicesListener);
+        serviceBinder.removeServiceStatusListener(serviceStatusListener);
         unbindService(connection);
-        super.onStop();
+        super.onDestroy();
+
     }
+//    @Override
+//    public void onRestart(){
+//        super.onRestart();
+//        Toast.makeText(MainActivity.this,"Welcome...!", Toast.LENGTH_LONG).show();
+//        startActivity(new Intent(MainActivity.this,Instructions.class));
+//
+//
+//    }
+
 
 //    private ServiceConnection connection = new ServiceConnection() {
 //

@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "1045110386337",
-    "project_id": "infectiontracker-225c8",
-    "storage_bucket": "infectiontracker-225c8.appspot.com"
+    "project_number": "671212731563",
+    "project_id": "covidtracker-a95fb",
+    "storage_bucket": "covidtracker-a95fb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1045110386337:android:157f0b535d6b14d1dd8ae0",
+        "mobilesdk_app_id": "1:671212731563:android:a2c094a8efec87981f0bee",
         "android_client_info": {
-          "package_name": "app.bandemic.InfectionTracker"
+          "package_name": "com.mohcc.CovidTracker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1045110386337-j47is8s49pfj9hj3r056a8aqu6pptsrr.apps.googleusercontent.com",
+          "client_id": "671212731563-q7mckdid2cpeinb7bg5lvqdt5u6vtoln.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "app.bandemic.InfectionTracker",
+            "package_name": "com.mohcc.CovidTracker",
             "certificate_hash": "8af388311768f4bb93830dfeea02531b87566d3a"
           }
         },
         {
-          "client_id": "1045110386337-31f0ist17kgm7h0h5lldgb7haus6jnai.apps.googleusercontent.com",
+          "client_id": "671212731563-a6jdv3cbju1ebc256rdmuer4qhsf3b56.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCv7QuoiS5ie1P2kmhZLLZdZHtUbaxdhZc"
+          "current_key": "AIzaSyA9-ZhRnJ7BCzTUOgeKa76-Imqe3vu75xk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1045110386337-31f0ist17kgm7h0h5lldgb7haus6jnai.apps.googleusercontent.com",
+              "client_id": "671212731563-a6jdv3cbju1ebc256rdmuer4qhsf3b56.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

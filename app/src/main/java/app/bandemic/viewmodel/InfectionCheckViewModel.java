@@ -14,12 +14,12 @@ public class InfectionCheckViewModel extends AndroidViewModel {
 
     private final InfectedUUIDRepository mRepository;
 
-    private final LiveData<List<Infection>> possiblyInfectedEncounters;
+    //private  LiveData<List<Infection>> possiblyInfectedEncounters;
 
     public InfectionCheckViewModel(Application application) {
         super(application);
         mRepository = new InfectedUUIDRepository(application);
-        possiblyInfectedEncounters = mRepository.getPossiblyInfectedEncounters();
+       // possiblyInfectedEncounters = mRepository.getPossiblyInfectedEncounters();
     }
 
     public void refreshInfectedUUIDs() {
@@ -28,6 +28,6 @@ public class InfectionCheckViewModel extends AndroidViewModel {
 
     public LiveData<List<Infection>> getPossiblyInfectedEncounters() {
 
-        return possiblyInfectedEncounters; }
+        return mRepository.getPossiblyInfectedEncounters(); }
 
 }

@@ -3,14 +3,13 @@ package app.bandemic.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import app.bandemic.R;
 
 public class Instructions extends AppCompatActivity {
-    Button next=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +18,10 @@ public class Instructions extends AppCompatActivity {
     }
 
     public void onNextClick(View view) {
-        startActivity(new Intent(this, DataProtectionInfo.class));
-        finish();
+        Intent i=new Intent(this,DataProtectionInfo.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+       // startActivity(new Intent(this, DataProtectionInfo.class));
+       // finish();
     }
 }

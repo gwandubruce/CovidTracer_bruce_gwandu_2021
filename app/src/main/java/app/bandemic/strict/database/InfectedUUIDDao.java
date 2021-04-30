@@ -28,7 +28,7 @@ public interface InfectedUUIDDao {
     LiveData<List<Infection>> getPossiblyInfectedEncounters();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(InfectedUUID... uuids);
+    void insertAll(InfectedUUID... infectedUUID);
 
     @Delete
     void delete(InfectedUUID infectedUUID);

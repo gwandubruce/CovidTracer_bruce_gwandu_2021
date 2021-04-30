@@ -24,22 +24,31 @@ public class DataProtectionInfo extends AppCompatActivity {
         TextView tv = findViewById(R.id.dataProtectionContent);
         tv.setText(Html.fromHtml(getString(R.string.dataprotection_content)));
         tv.setMovementMethod(LinkMovementMethod.getInstance());
-        ifPositive=(Button)findViewById(R.id.share);
+        ifPositive= findViewById(R.id.share);
         ifPositive.setOnClickListener(v -> {
-            Intent intent =new Intent(this,ShareYourStatus.class);
-            startActivity(intent);
+//            Intent intent =new Intent(this,ShareYourStatus.class);
+//            startActivity(intent);
+            Intent i=new Intent(this,ShareYourStatus.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
 
         });
     }
 
     public void onOk(View view) {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             editor.putBoolean(MainActivity.PREFERENCE_DATA_OK, true);
         }
         editor.apply();
-        finish();
+
+        Intent i=new Intent(this,MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+
+
+
     }
 //    public void onStatusClick(View v) {
 //        startActivity(new Intent(DataProtectionInfo.this, ShareYourStatus.class));
