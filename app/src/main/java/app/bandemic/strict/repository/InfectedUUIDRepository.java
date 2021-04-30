@@ -19,6 +19,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.io.SyncFailedException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -126,11 +127,12 @@ public class InfectedUUIDRepository {
 //                });
 //            }
 
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 List<Object> list = new ArrayList<>();
+                InfectedUUID infectedUUID;
                 ArrayList<ShellClass> shellClasses = new ArrayList<>();
+                ArrayList<InfectedUUID> listInfectedUUID = new ArrayList<>();
 
                 snapshot.getChildrenCount();
                 //List<User> list= new ArrayList<User>();
@@ -138,16 +140,46 @@ public class InfectedUUIDRepository {
               //  List<Message> messages = snapshot.getValue(t);
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
                    // OwnUUIDResponse ownUUID = snapshot.getValue(OwnUUIDResponse.class);
-                    childDataSnapshot.getChildren().forEach(x->{
+                    for (DataSnapshot x : childDataSnapshot.getChildren()){
                         String most = Objects.requireNonNull(x.child("ownUUID").child("mostSignificantBits").getValue()).toString();
                         String least = Objects.requireNonNull(x.child("ownUUID").child("leastSignificantBits").getValue()).toString();
                         String timestampDate = Objects.requireNonNull(x.child("timestamp").child("date").getValue()).toString();
                         String timestampDay  = Objects.requireNonNull(x.child("timestamp").child("day").getValue()).toString();
-                        shellAllClasses.add(new ShellClass(most,least,timestampDate,timestampDay));
                         shellClasses.add(new ShellClass(most,least,timestampDate,timestampDay));
-                    });
+                    };
                 }
 
+
+                for (ShellClass c:shellClasses){
+                    long least= Long.parseLong(c.getLeast());
+                    long most= Long.parseLong(c.getMost());
+                    Date date = new Date();
+
+                    // Long most= ((Long) ((HashMap) ((Map) obj).get("ownUUID")).get("mostSignificantBits"));
+                    ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[/*Long.BYTES*/ 8 * 2]);
+                    inputBuffer.putLong(0, least);
+                    inputBuffer.putLong(4, most);
+
+                    byte[] broadcastData;
+
+                    try {
+                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                        broadcastData = digest.digest(inputBuffer.array());
+                        broadcastData = Arrays.copyOf(broadcastData, 27);
+                        broadcastData[26] = getTransmitPower();
+                    } catch (NoSuchAlgorithmException e) {
+                        Log.wtf(LOG_TAG, "Algorithm not found", e);
+                        throw new RuntimeException(e);
+                    }
+
+                    infectedUUID = new InfectedUUID();
+                    infectedUUID.hashedId=broadcastData;
+                    infectedUUID.createdOn=date;
+                    infectedUUID.distrustLevel=8;
+                    infectedUUID.icdCode="Positive";
+                    listInfectedUUID.add(infectedUUID);
+
+                }
 
 //                System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
 
@@ -155,6 +187,7 @@ public class InfectedUUIDRepository {
 
                     if(shellClasses != null) {
                         //use shellClass getters
+
                         //infectedUUIDDao.insertAll(list.toArray(new InfectedUUID[list.size()]));
                     }
                     else {
