@@ -20,6 +20,7 @@ import android.util.Log;
 import android.util.LruCache;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
 
 import java.util.Collections;
 
@@ -57,7 +58,7 @@ public class BleScanner {
         return new String(hexChars);
     }
 
-    //@android.support.annotation.RequiresPermission("android.permission.BLUETOOTH_ADMIN")
+    @RequiresPermission("android.permission.BLUETOOTH_ADMIN")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void startScanning() {
         Log.d(LOG_TAG, "Starting scan");

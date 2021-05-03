@@ -70,7 +70,7 @@ public class InfectedUUIDsAdapter extends RecyclerView.Adapter<InfectedUUIDsAdap
         this.infectedUUIDs = uuids; // the list is set here
         notifyDataSetChanged();
     }
-// we can use this method to determine when a person was recently exposed to corona
+// we can use this method to determine when a person was recently exposed to corona ......kana zvazonetsa
     public Infection getLastInfectedUUUID() {
         if(!infectedUUIDs.isEmpty()) {
             return infectedUUIDs.get(infectedUUIDs.size()-1);

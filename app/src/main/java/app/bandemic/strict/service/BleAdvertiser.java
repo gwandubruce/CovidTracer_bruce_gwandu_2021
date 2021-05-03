@@ -20,6 +20,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
 
 import java.util.Arrays;
 
@@ -56,14 +57,14 @@ public class BleAdvertiser {
         }
     }
 
-   // @android.support.annotation.RequiresPermission("android.permission.BLUETOOTH_ADMIN")
+    @RequiresPermission("android.permission.BLUETOOTH_ADMIN")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void restartAdvertising() {
         stopAdvertising();
         startAdvertising();
     }
 
-   // @android.support.annotation.RequiresPermission("android.permission.BLUETOOTH_ADMIN")
+    @RequiresPermission("android.permission.BLUETOOTH_ADMIN")
     public void startAdvertising() {
         Log.i(LOG_TAG, "Starting Advertising");
         AdvertiseSettings settings = null;
@@ -109,6 +110,7 @@ public class BleAdvertiser {
         bluetoothAdapter.setName("Phone");
 
         // TODO: check if null when launching with Bluetooth disabled
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             bluetoothLeAdvertiser.startAdvertising(settings, data, bluetoothAdvertiseCallback);
         }
@@ -126,7 +128,7 @@ public class BleAdvertiser {
             mBluetoothGattServer.addService(BandemicProfile.createBandemicService());
         }
     }
-
+    @RequiresPermission("android.permission.BLUETOOTH_ADMIN") // yaita zvekuwedzerwa............................
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("NewApi")
     public void stopAdvertising() {

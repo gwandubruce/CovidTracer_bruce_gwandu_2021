@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -40,6 +42,7 @@ public class OwnUUID {
         this.timestamp = timestamp;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "OwnUUID{" +

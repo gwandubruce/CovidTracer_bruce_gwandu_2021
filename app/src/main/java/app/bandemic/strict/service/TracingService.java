@@ -57,7 +57,6 @@ public class TracingService extends Service {
     public static final int BROADCAST_LENGTH = HASH_LENGTH + 1;
     private static final int UUID_VALID_TIME = 1000 * 60 * 30; //ms * sec * 30 min
 
-    private Looper serviceLooper;
     private Handler serviceHandler;
     private BleScanner bleScanner;
     private BleAdvertiser bleAdvertiser;
@@ -125,7 +124,7 @@ public class TracingService extends Service {
         thread.start();
 
         // Get the HandlerThread's Looper and use it for our Handler
-        serviceLooper = thread.getLooper();
+        Looper serviceLooper = thread.getLooper();
         serviceHandler = new Handler(serviceLooper);  //...............ndichazvichinja
         beaconCache = new BeaconCache(broadcastRepository, serviceHandler);
         bleScanner = new BleScanner(bluetoothAdapter, beaconCache, this);
@@ -276,7 +275,7 @@ public class TracingService extends Service {
 //        registerReceiver(stateReceiver, filter);
 //    }
 
-    @TargetApi(26)
+    @TargetApi(30)
     private void createChannel(NotificationManager notificationManager) {
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
 
@@ -288,6 +287,7 @@ public class TracingService extends Service {
         notificationManager.createNotificationChannel(mChannel);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void runAsForgroundService() {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -422,6 +422,7 @@ public class TracingService extends Service {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         runAsForgroundService();
