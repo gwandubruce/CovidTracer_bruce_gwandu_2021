@@ -23,6 +23,7 @@ public interface OwnUUIDDao {
     @Insert
     void insertAll(OwnUUID... uuids);
 
+
     @Delete
     void delete(OwnUUID ownUUID);
 }

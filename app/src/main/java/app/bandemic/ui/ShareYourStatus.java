@@ -65,13 +65,7 @@ public class ShareYourStatus extends AppCompatActivity {
         // cardView.setCardBackgroundColor(getResources().getColor(R.color.colorNoDanger));
 
         // Create the observer which updates the UI.
-        final Observer<List<OwnUUID>> nameObserver =new Observer<List<OwnUUID>>() {
-            @Override
-            public void onChanged(List<OwnUUID> ownUUIDList) {
-                listData=ownUUIDList;
-
-            }
-        };
+        final Observer<List<OwnUUID>> nameObserver = ownUUIDS -> listData = ownUUIDS;
 
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
@@ -91,8 +85,9 @@ public class ShareYourStatus extends AppCompatActivity {
         //List<OwnUUID> data = new BroadcastRepository(getApplication()).getAllOwnUUIDs().getValue();
 //        OwnUUIDResponse ownUUIDResponse = new OwnUUIDResponse(data);
 //        OwnUUIDResponse ownUUIDResponse = createOwnUUIDResponse();
-
-        mDatabase.push().setValue(listData);
+        OwnUUIDResponse response = new OwnUUIDResponse();
+        response.setData(listData);
+        mDatabase.push().setValue(response);
 
     }
 
