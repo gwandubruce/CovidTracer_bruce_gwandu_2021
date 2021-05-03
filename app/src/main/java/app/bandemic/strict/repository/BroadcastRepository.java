@@ -19,7 +19,7 @@ public class BroadcastRepository {
     private final LiveData<List<OwnUUID>> mAllOwnUUIDs;
     private final LiveData<List<Beacon>> mAllBeacons;
     private final LiveData<List<Beacon>> mDistinctBeacons;
-    private Application application;
+   // private Application application;
 
 
 
@@ -30,7 +30,7 @@ public class BroadcastRepository {
         mBeaconDao = db.beaconDao();
         mAllOwnUUIDs = mOwnUUIDDao.getAll();
         mAllBeacons = mBeaconDao.getAll();
-        mDistinctBeacons = mBeaconDao.getAllDistinctBroadcast(); // this is not different to mBeaconDao.getAll();
+        mDistinctBeacons = mBeaconDao.getAllDistinctBroadcast(); // this is not different to mBeaconDao.getAll(); LOOK FOR QUERY WHICH GETS DISTICT
     }
 
     public LiveData<List<OwnUUID>> getAllOwnUUIDs() {

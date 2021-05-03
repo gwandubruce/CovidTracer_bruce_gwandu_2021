@@ -64,8 +64,6 @@ public class TracingService extends Service {
     // -----------------------------------
     public static BeaconCache beaconCache;
 
-    private UUID currentUUID;
-
     private BroadcastRepository broadcastRepository;
 
     private final IBinder mBinder = new TracingServiceBinder();
@@ -102,7 +100,7 @@ public class TracingService extends Service {
             public void onReceive(Context context, Intent intent) {
                 final String action = intent.getAction();
 
-                assert action != null;
+               // assert action != null;
                 if (action.equals(ACTION_STATE_CHANGED)) {
                     final int bluetoothState = intent.getIntExtra(EXTRA_STATE, ERROR);
 
@@ -128,7 +126,7 @@ public class TracingService extends Service {
 
         // Get the HandlerThread's Looper and use it for our Handler
         serviceLooper = thread.getLooper();
-        serviceHandler = new Handler(serviceLooper);  //...............ndachazvichinja
+        serviceHandler = new Handler(serviceLooper);  //...............ndichazvichinja
         beaconCache = new BeaconCache(broadcastRepository, serviceHandler);
         bleScanner = new BleScanner(bluetoothAdapter, beaconCache, this);
         listener=beaconCache.getNearbyDevicesListeners();
@@ -142,8 +140,7 @@ public class TracingService extends Service {
     }
 
     public  class TracingServiceBinder extends Binder {
-//private final static String demobho="Tahwinha"; bho zvekuti,coz its a final within an inner class
-//private int bruce; yakabvuma when class was static
+
         public  TracingService getService() {
             // Return this instance of LocalService so clients can call public methods
             return TracingService.this;
@@ -223,7 +220,7 @@ public class TracingService extends Service {
     private final Runnable regenerateUUID = () -> {
         Log.i(LOG_TAG, "Regenerating UUID");
 
-        currentUUID = UUID.randomUUID();
+        UUID currentUUID = UUID.randomUUID();
        long time = System.currentTimeMillis();
 
         broadcastRepository.insertOwnUUID(new OwnUUID(currentUUID, new Date(time)));
@@ -245,9 +242,9 @@ public class TracingService extends Service {
             throw new RuntimeException(e);
         }
 
-       // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             bleAdvertiser.setBroadcastData(broadcastData);
-        //}
+        }
 
         serviceHandler.removeCallbacks(this.regenerateUUID);
         serviceHandler.postDelayed(this.regenerateUUID, UUID_VALID_TIME);
@@ -381,7 +378,7 @@ public class TracingService extends Service {
        bleAdvertiser = new BleAdvertiser(bluetoothManager, this);
 
         //TODO this can lead to UUID being regenerated more often, do a check somewhere for that
-        new Thread(regenerateUUID).start(); // tomboisa start() timboona...tadzisa regenerateUUID.run();
+        new Thread(regenerateUUID).run(); // tomboisa start() timboona...tadzisa regenerateUUID.run();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             bleAdvertiser.startAdvertising();

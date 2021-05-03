@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.jetbrains.annotations.NotNull;
+
 import app.bandemic.R;
 import app.bandemic.fragments.ErrorMessageFragment;
 import app.bandemic.fragments.NearbyDevicesFragment;
@@ -26,6 +28,8 @@ import app.bandemic.strict.service.BeaconCache;
 import app.bandemic.strict.service.TracingService;
 
 import app.bandemic.viewmodel.MainActivityViewModel;
+
+import static app.bandemic.fragments.ErrorMessageFragment.*;
 
 
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -132,9 +136,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(() -> {
             mViewModel.onRefresh();
         });
-        mViewModel.eventRefresh().observe(this, refreshing -> {
-            refreshLayout.setRefreshing(refreshing);
-        });
+        mViewModel.eventRefresh().observe(this, refreshLayout::setRefreshing);
 
         checkPermissions();
 
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
+                                           @NotNull String[] permissions, @NotNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -184,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
+            default:
+                throw new IllegalStateException("Unexpected value: " + requestCode);
         }
     }
 //    @Override
@@ -195,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //    }
 
-    private TracingService.ServiceStatusListener serviceStatusListener = serviceStatus -> {
+    private final TracingService.ServiceStatusListener serviceStatusListener = serviceStatus -> {
         Log.i(TAG, "Service status: " + serviceStatus);
         runOnUiThread(() -> {
             if (serviceStatus == TracingService.STATUS_RUNNING) {
@@ -218,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (serviceStatus == TracingService.STATUS_LOCATION_NOT_ENABLED) {
                     errorMessage = getString(R.string.error_location_not_enabled);
                 }
-                ErrorMessageFragment errorMessageFragment = ErrorMessageFragment.newInstance(errorMessage);
+                ErrorMessageFragment errorMessageFragment = newInstance(errorMessage);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                         .replace(R.id.fragment_nearby_devices, errorMessageFragment)

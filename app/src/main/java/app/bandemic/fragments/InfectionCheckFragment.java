@@ -43,12 +43,16 @@ public class InfectionCheckFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         // RecyclerView is flexible view providing a limited window of or into a large data set
         // It has a subclass called RecyclerView.Adapter is responsible for providing views that represent items in a data set
+
         recyclerView = view.findViewById(R.id.infection_check_list_recycler_view);
-        noInfectionInformation = view.findViewById(R.id.layout_not_infected1);
+        noInfectionInformation = view.findViewById(R.id.layout_not_infected1);  // MULTIPLE IMPLEMENTATIONS
         recyclerView.setHasFixedSize(true);
+
         //layout manager is responsible for measuring and positioning item views within a recyclerView
+
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         mAdapter = new InfectedUUIDsAdapter();

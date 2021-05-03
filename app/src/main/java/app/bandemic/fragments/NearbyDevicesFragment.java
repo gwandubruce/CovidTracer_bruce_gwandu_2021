@@ -77,7 +77,7 @@ public class NearbyDevicesFragment extends Fragment {
 
     }
 
-    private class NearbyDeviceView {
+    private static class NearbyDeviceView {   // CHANGED THIS INNER CLASS TO STATIC
         ImageView iv;
         SpringAnimation animX;
         SpringAnimation animY;
@@ -101,7 +101,7 @@ public class NearbyDevicesFragment extends Fragment {
         anim1X.setSpring(new SpringForce().setStiffness(SpringForce.STIFFNESS_LOW));
         anim1Y.setSpring(new SpringForce().setStiffness(SpringForce.STIFFNESS_LOW));
 
-        NearbyDeviceView ndv = new NearbyDeviceView();
+        NearbyDevicesFragment.NearbyDeviceView ndv = new NearbyDeviceView();
         ndv.iv = newIV;
         ndv.animX = anim1X;
         ndv.animY = anim1Y;
@@ -111,7 +111,7 @@ public class NearbyDevicesFragment extends Fragment {
 
     private void removeNearbyDevice() {
         if (nearbyDeviceViews.size() > 0) { // if number of devices on screen is greater than zero that is when you can remove
-            NearbyDeviceView removed = nearbyDeviceViews.remove(0);
+            NearbyDevicesFragment.NearbyDeviceView removed = nearbyDeviceViews.remove(0);
             removed.animX.cancel();
             removed.animY.cancel();
             layout.removeView(removed.iv);
@@ -145,7 +145,7 @@ public class NearbyDevicesFragment extends Fragment {
     }
 
     public void skipAnimations() {
-        for (NearbyDeviceView nearbyDeviceView : nearbyDeviceViews) {
+        for (NearbyDevicesFragment.NearbyDeviceView nearbyDeviceView : nearbyDeviceViews) {
             nearbyDeviceView.animX.skipToEnd();
             nearbyDeviceView.animY.skipToEnd();
         }

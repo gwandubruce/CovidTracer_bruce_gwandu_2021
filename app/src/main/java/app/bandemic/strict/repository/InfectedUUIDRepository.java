@@ -129,17 +129,17 @@ public class InfectedUUIDRepository {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                List<Object> list = new ArrayList<>();
+               // List<Object> list = new ArrayList<>();
                 InfectedUUID infectedUUID;
                 ArrayList<ShellClass> shellClasses = new ArrayList<>();
-                ArrayList<InfectedUUID> listInfectedUUID = new ArrayList<>();
+                List<InfectedUUID> listInfectedUUID = new ArrayList<>();
 
-                snapshot.getChildrenCount();
-                //List<User> list= new ArrayList<User>();
-                GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
-              //  List<Message> messages = snapshot.getValue(t);
+               // snapshot.getChildrenCount();
+
+               // GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
+
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
-                   // OwnUUIDResponse ownUUID = snapshot.getValue(OwnUUIDResponse.class);
+
                     for (DataSnapshot x : childDataSnapshot.getChildren()){
                         String most = Objects.requireNonNull(x.child("ownUUID").child("mostSignificantBits").getValue()).toString();
                         String least = Objects.requireNonNull(x.child("ownUUID").child("leastSignificantBits").getValue()).toString();
@@ -188,7 +188,7 @@ public class InfectedUUIDRepository {
                     if(shellClasses != null) {
                         //use shellClass getters
 
-                        //infectedUUIDDao.insertAll(list.toArray(new InfectedUUID[list.size()]));
+                        infectedUUIDDao.insertAll(listInfectedUUID.toArray(new InfectedUUID[0]));
                     }
                     else {
                         // TODO: error handling!
@@ -201,56 +201,66 @@ public class InfectedUUIDRepository {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                List<Object> list = new ArrayList<>();
-                snapshot.getChildrenCount();
-                //List<User> list= new ArrayList<User>();
-                GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
-                //  List<Message> messages = snapshot.getValue(t);
+                InfectedUUID infectedUUID;
+                ArrayList<ShellClass> shellClasses = new ArrayList<>();
+                List<InfectedUUID> listInfectedUUID = new ArrayList<>();
+
+                // snapshot.getChildrenCount();
+
+                // GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
+
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
 
-                    ArrayList<Object> ownUUIDObject = childDataSnapshot.getValue(t);
-                   // Map<String,Long> f=new HashMap<>();                          // for tests
-                    for (Object obj:ownUUIDObject){
-                        System.out.println(((HashMap) obj).get("ownUUID"));
-
-                    }
-
-
-//          ------------------------------------------------------------------------------------------------------------------
-                    // Convert the UUID to its SHA-256 hash
-//                    ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[/*Long.BYTES*/ 8 * 2]);
-//                    inputBuffer.putLong(0, currentUUID.getMostSignificantBits());
-//                    inputBuffer.putLong(4, currentUUID.getLeastSignificantBits());
-//
-//                    byte[] broadcastData;
-//
-//                    try {
-//                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-//                        broadcastData = digest.digest(inputBuffer.array());
-//                        broadcastData = Arrays.copyOf(broadcastData, 27);
-//                        broadcastData[26] = getTransmitPower();
-//                    } catch (NoSuchAlgorithmException e) {
-//                        Log.wtf(LOG_TAG, "Algorithm not found", e);
-//                        throw new RuntimeException(e);
-//                    }
-                    //list.addAll(ownUUID);
-                   // System.out.println("xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx--------------"+ownUUID);
+                    for (DataSnapshot x : childDataSnapshot.getChildren()){
+                        String most = Objects.requireNonNull(x.child("ownUUID").child("mostSignificantBits").getValue()).toString();
+                        String least = Objects.requireNonNull(x.child("ownUUID").child("leastSignificantBits").getValue()).toString();
+                        String timestampDate = Objects.requireNonNull(x.child("timestamp").child("date").getValue()).toString();
+                        String timestampDay  = Objects.requireNonNull(x.child("timestamp").child("day").getValue()).toString();
+                        shellClasses.add(new ShellClass(most,least,timestampDate,timestampDay));
+                    };
                 }
 
 
-                //System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
+                for (ShellClass c:shellClasses){
+                    long least= Long.parseLong(c.getLeast());
+                    long most= Long.parseLong(c.getMost());
+                    Date date = new Date();
+
+                    // Long most= ((Long) ((HashMap) ((Map) obj).get("ownUUID")).get("mostSignificantBits"));
+                    ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[/*Long.BYTES*/ 8 * 2]);
+                    inputBuffer.putLong(0, least);
+                    inputBuffer.putLong(4, most);
+
+                    byte[] broadcastData;
+
+                    try {
+                        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                        broadcastData = digest.digest(inputBuffer.array());
+                        broadcastData = Arrays.copyOf(broadcastData, 27);
+                        broadcastData[26] = getTransmitPower();
+                    } catch (NoSuchAlgorithmException e) {
+                        Log.wtf(LOG_TAG, "Algorithm not found", e);
+                        throw new RuntimeException(e);
+                    }
+
+                    infectedUUID = new InfectedUUID();
+                    infectedUUID.hashedId=broadcastData;
+                    infectedUUID.createdOn=date;
+                    infectedUUID.distrustLevel=8;
+                    infectedUUID.icdCode="Positive";
+                    listInfectedUUID.add(infectedUUID);
+
+                }
+
+//                System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
 
                 AppDatabase.databaseWriteExecutor.execute(() -> {
-                    if(list != null) {
-                        infectedUUIDDao.insertAll(list.toArray(new InfectedUUID[list.size()]));
-                    }
-                    else {
-                        // TODO: error handling!
-                        Log.e(LOG_TAG, "Invalid response from api");
-                    }
+
+                    //use shellClass getters
+
+                    infectedUUIDDao.insertAll(listInfectedUUID.toArray(new InfectedUUID[0]));
 
                 });
-
             }
 
             @Override

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import app.bandemic.strict.database.OwnUUID;
-@Keep
+
 @IgnoreExtraProperties
 public class OwnUUIDResponse implements Serializable {
     private List<OwnUUID> data;

@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey;
 @Entity
 public class InfectedUUID {
 
-    @PrimaryKey
-    @SerializedName("id")
+    @PrimaryKey(autoGenerate = true)
+   // @SerializedName("id")
     public int id;
     @SerializedName("created_on")
     public Date createdOn;

@@ -18,7 +18,6 @@ import okio.ByteString;
 public class BeaconCache {
     private static final String LOG_TAG = "BeaconCache";
     private final int MOVING_AVERAGE_LENGTH = 7;
-    private final long FLUSH_AFTER_MILLIS = 1000 * 60 * 3; // flush after three minutes
 
     private final BroadcastRepository broadcastRepository;
     private final Handler serviceHandler;
@@ -72,6 +71,8 @@ public class BeaconCache {
 
         // postpone flushing
         serviceHandler.removeCallbacks(entry.flushRunnable);
+        // flush after three minutes
+        long FLUSH_AFTER_MILLIS = 1000 * 60 * 3;
         serviceHandler.postDelayed(entry.flushRunnable, FLUSH_AFTER_MILLIS);
 
         CircularArray<Double> distances = entry.distances;

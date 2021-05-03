@@ -25,9 +25,7 @@ import app.bandemic.viewmodel.EnvironmentLoggerViewModel;
 
 public class ShareYourStatus extends AppCompatActivity {
   private EditText enterPinTextBox;
-   private Button shareStatusBtn;
     private DatabaseReference mDatabase;
-    private EnvironmentLoggerViewModel mViewModel;
     private List<OwnUUID> listData;
 
     AppDatabase localDb =null;
@@ -37,10 +35,11 @@ public class ShareYourStatus extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.share_your_status);
         enterPinTextBox=(EditText)findViewById(R.id.pass);
-        shareStatusBtn=(Button)findViewById(R.id.push_ids);
+        Button shareStatusBtn = (Button) findViewById(R.id.push_ids);
 
-        localDb= Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "bandemic_database").build();
+//        localDb= Room.databaseBuilder(getApplicationContext(),
+//                AppDatabase.class, "bandemic_database").build();
+       // localDb=AppDatabase.getDatabase(getApplicationContext());
         mDatabase= FirebaseDatabase.getInstance().getReference().child("ListOfOwnUUID_Objects");
 
 //        shareStatusBtn.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +60,7 @@ public class ShareYourStatus extends AppCompatActivity {
 //            }
 //        });
 
-        mViewModel = new ViewModelProvider(this).get(EnvironmentLoggerViewModel.class);
+        EnvironmentLoggerViewModel mViewModel = new ViewModelProvider(this).get(EnvironmentLoggerViewModel.class);
         // cardView.setCardBackgroundColor(getResources().getColor(R.color.colorNoDanger));
 
         // Create the observer which updates the UI.

@@ -63,6 +63,7 @@ public class BleScanner {
         Log.d(LOG_TAG, "Starting scan");
 
         bluetoothScanCallback = new ScanCallback() {
+            @Override
             public void onScanResult(int callbackType, ScanResult result) {
 
                 Log.d(LOG_TAG, "onScanResult");
