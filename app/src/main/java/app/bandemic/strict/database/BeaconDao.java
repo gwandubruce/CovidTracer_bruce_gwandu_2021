@@ -14,7 +14,7 @@ public interface BeaconDao {
     @Query("SELECT * FROM beacon")
     LiveData<List<Beacon>> getAll();
 
-    @Query("SELECT DISTINCT * FROM beacon")    // added DISTINCT receivedDoubleHash
+    @Query("SELECT  * FROM beacon")    // added DISTINCT receivedDoubleHash
     LiveData<List<Beacon>> getAllDistinctBroadcast();  // look for query to get distinct beacons because it is the same with getAll()
 
     /*@Query("SELECT * FROM user WHERE uid IN (:userIds)")
