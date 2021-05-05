@@ -69,7 +69,7 @@ public class BleScanner {
 
                 Log.d(LOG_TAG, "onScanResult");
 
-                ScanRecord record = result.getScanRecord();
+                ScanRecord record = result.getScanRecord();  // IN BleScanner ...can we manipulate this record
 
                 // if there is no record, discard this packet......................................................................
                 if (record == null) {
@@ -77,6 +77,7 @@ public class BleScanner {
                 }
 
                 //TODO The values here seem wrong
+               // int txPower = -65;//record.getTxPowerLevel();
                 int txPower = -65;//record.getTxPowerLevel();
                 int rssi = result.getRssi();
 

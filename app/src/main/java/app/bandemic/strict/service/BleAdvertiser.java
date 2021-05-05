@@ -116,7 +116,7 @@ public class BleAdvertiser {
         }
     }
     @SuppressLint("NewApi")
-    private BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
+    private final BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
 
         @Override
         public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {

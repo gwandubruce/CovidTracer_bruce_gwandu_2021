@@ -165,8 +165,8 @@ public class InfectedUUIDRepository {
                     try {
                         MessageDigest digest = MessageDigest.getInstance("SHA-256");
                         broadcastData = digest.digest(inputBuffer.array());
-                        broadcastData = Arrays.copyOf(broadcastData, 27);
-                        broadcastData[26] = getTransmitPower();
+                        broadcastData = Arrays.copyOf(broadcastData, 26);  // removed 27 ndikaisa 26 as it is the hash length
+                      //  broadcastData[26] = getTransmitPower();
                     } catch (NoSuchAlgorithmException e) {
                         Log.wtf(LOG_TAG, "Algorithm not found", e);
                         throw new RuntimeException(e);
