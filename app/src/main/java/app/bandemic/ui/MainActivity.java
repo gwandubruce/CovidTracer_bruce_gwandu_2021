@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
 //        startService(intent);
 //        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 //        //onShareStatusClick();
-
 
         connection = new ServiceConnection() {
 
@@ -241,14 +241,14 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     };
-// ndakachinja kubva kuna onStop to onDestroy
+// ndakachinja kubva kuna onStop to onDestroy // Changed again to onStop().................
     @Override
     protected void onDestroy() {
-
+       // super.onStop();
         serviceBinder.removeNearbyDevicesListener(nearbyDevicesListener);
         serviceBinder.removeServiceStatusListener(serviceStatusListener);
         unbindService(connection);
-        super.onDestroy();
+        super.onDestroy();                  // Commented  onDestroy()  out upon changing to onStop()
 
     }
 //    @Override

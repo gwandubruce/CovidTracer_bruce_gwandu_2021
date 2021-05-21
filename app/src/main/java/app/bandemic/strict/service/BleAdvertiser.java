@@ -173,6 +173,7 @@ public class BleAdvertiser {
                         0,
                         Arrays.copyOfRange(broadcastData, offset, broadcastData.length)); // REMOVE NULL AND INSERTED THE ARRAY AS ON LINE 137
             }
+
         }
     };
 }

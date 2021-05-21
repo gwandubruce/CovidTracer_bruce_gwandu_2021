@@ -50,7 +50,7 @@ public class NearbyDevicesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //boardViewModel = ViewModelProvider(this).get(BoardViewModel::class.java) stack overflow........................................................
+
 
         model = new ViewModelProvider(this).get(NearbyDevicesViewModel.class); // viewModel monitoring distances of neighbors
         layout = view.findViewById(R.id.layout);

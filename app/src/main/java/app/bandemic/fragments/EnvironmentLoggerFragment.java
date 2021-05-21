@@ -57,10 +57,7 @@ public class EnvironmentLoggerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-      //  View cardLayout = cardView.findViewById(R.id.environmentCard);  // CAN BE AN OPTION
 
-        //model = new ViewModelProvider(this).get(NearbyDevicesViewModel.class);  stack overflow
-      //  mViewModel=ViewModelProvider.AndroidViewModelFactory.getInstance(this.getActivity().getApplication()).create(EnvironmentLoggerViewModel.class);
        mViewModel = new ViewModelProvider(this).get(EnvironmentLoggerViewModel.class);
         cardView.setCardBackgroundColor(getResources().getColor(R.color.colorNoDanger));
 

@@ -17,12 +17,6 @@ public interface BeaconDao {
     @Query("SELECT  * FROM beacon")    // added DISTINCT receivedDoubleHash
     LiveData<List<Beacon>> getAllDistinctBroadcast();  // look for query to get distinct beacons because it is the same with getAll()
 
-    /*@Query("SELECT * FROM user WHERE uid IN (:userIds)")
-    List<User> loadAllByIds(int[] userIds);
-
-    @Query("SELECT * FROM user WHERE first_name LIKE :first AND " +
-            "last_name LIKE :last LIMIT 1")
-    User findByName(String first, String last);*/
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Beacon... beacons);

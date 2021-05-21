@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Binder;
@@ -21,6 +22,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -38,6 +40,7 @@ import app.bandemic.R;
 import app.bandemic.strict.database.OwnUUID;
 import app.bandemic.strict.repository.BroadcastRepository;
 import app.bandemic.strict.service.BeaconCache.NearbyDevicesListener;
+import app.bandemic.ui.Instructions;
 import app.bandemic.ui.MainActivity;
 
 import static android.bluetooth.BluetoothAdapter.*;
@@ -177,33 +180,6 @@ public class TracingService extends Service {
     }
 
 
-//    public int getServiceStatus() {
-//        return serviceStatus;
-//    }
-//
-//    public void addServiceStatusListener(ServiceStatusListener listener) {
-//        serviceStatusListeners.add(listener);
-//    }
-//
-//    public void removeServiceStatusListener(ServiceStatusListener listener) {
-//
-//        serviceStatusListeners.remove(listener);
-//    }
-//
-//    public double[] getNearbyDevices() {
-//        return beaconCache.getNearbyDevices();
-//    }
-//
-//    public void addNearbyDevicesListener() {
-//
-//        beaconCache.getNearbyDevicesListeners().addAll(listener);
-//    }
-//
-//    public void removeNearbyDevicesListener(NearbyDevicesListener listener) {
-//
-//        beaconCache.getNearbyDevicesListeners().remove(listener);
-//    }
-
 
     public interface ServiceStatusListener {
         void serviceStatusChanged(int serviceStatus);
@@ -234,16 +210,16 @@ public class TracingService extends Service {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             broadcastData = digest.digest(inputBuffer.array());
-            broadcastData = Arrays.copyOf(broadcastData, BROADCAST_LENGTH);
-            broadcastData[HASH_LENGTH] = getTransmitPower();
+           broadcastData = Arrays.copyOf(broadcastData, BROADCAST_LENGTH);  // COMMENTED OUT- BRUCE
+            broadcastData[HASH_LENGTH] = BleScanner.getTxPower(); // COMMENTED OUT- BRUCE
         } catch (NoSuchAlgorithmException e) {
             Log.wtf(LOG_TAG, "Algorithm not found", e);
             throw new RuntimeException(e);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      //  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // COMMENTED THEM OUT
             bleAdvertiser.setBroadcastData(broadcastData);
-        }
+      //  }
 
         serviceHandler.removeCallbacks(this.regenerateUUID);
         serviceHandler.postDelayed(this.regenerateUUID, UUID_VALID_TIME);
@@ -254,26 +230,6 @@ public class TracingService extends Service {
         return (byte) -65;
     }
 
-//    @Override
-//    public void onCreate() {
-//        super.onCreate();
-//        broadcastRepository = new BroadcastRepository(this.getApplication());
-//        bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-//        HandlerThread thread = new HandlerThread("TrackerHandler", Thread.NORM_PRIORITY);
-//        thread.start();
-//
-//        // Get the HandlerThread's Looper and use it for our Handler
-//        serviceLooper = thread.getLooper();
-//        serviceHandler = new Handler(serviceLooper);
-//        beaconCache = new BeaconCache(broadcastRepository, serviceHandler);
-//
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            filter.addAction(LocationManager.MODE_CHANGED_ACTION);
-//        }
-//        registerReceiver(stateReceiver, filter);
-//    }
 
     @TargetApi(30)
     private void createChannel(NotificationManager notificationManager) {
@@ -343,11 +299,15 @@ public class TracingService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
            bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         }
-       assert bluetoothManager != null;
+      // assert bluetoothManager != null;
         bluetoothAdapter = bluetoothManager.getAdapter();
         if (!bluetoothAdapter.isEnabled()) {
             Log.i(LOG_TAG, "Bluetooth not enabled");
             setServiceStatus(STATUS_BLUETOOTH_NOT_ENABLED);
+            return;
+        }
+        if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+            Toast.makeText(this,"Sorry Haina Bluetooth Low Energy...!",Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -385,34 +345,13 @@ public class TracingService extends Service {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             bleScanner.startScanning();
+        }else{
+           // Toast.makeText(this,"App Not Supported By Your Phone,Sorry...!",Toast.LENGTH_LONG).show();
         }
         setServiceStatus(STATUS_RUNNING);
     }
 
-//    private final BroadcastReceiver stateReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            final String action = intent.getAction();
-//
-//            assert action != null;
-//            if (action.equals(ACTION_STATE_CHANGED)) {
-//                final int bluetoothState = intent.getIntExtra(EXTRA_STATE, ERROR);
-//
-//                //There are also TURNING_ON and TURNING_OFF states, skip those
-//                if (bluetoothState == STATE_ON || bluetoothState == STATE_OFF) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//                        tryStartingBluetooth();
-//                    }
-//                }
-//            }
-//
-//            if (action.equals(LocationManager.MODE_CHANGED_ACTION)) {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//                    tryStartingBluetooth();
-//                }
-//            }
-//        }
-//    };
+
 
     @Override
     public void onDestroy() {

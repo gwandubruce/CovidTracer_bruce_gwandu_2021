@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -24,12 +25,17 @@ import androidx.annotation.RequiresPermission;
 
 import java.util.Collections;
 
+import static app.bandemic.strict.service.BandemicProfile.HASH_OF_UUID;
+
 public class BleScanner {
     private static final String LOG_TAG = "BleScanner";
     private final BluetoothLeScanner bluetoothLeScanner;
     private final BluetoothAdapter bluetoothAdapter;
     private final BeaconCache beaconCache;
     private final Context context;
+    private static int txPower;
+    private static int rssi;
+    private String deviceAddress;
 
     private ScanCallback bluetoothScanCallback;
 
@@ -71,19 +77,21 @@ public class BleScanner {
 
                 ScanRecord record = result.getScanRecord();  // IN BleScanner ...can we manipulate this record
 
+
                 // if there is no record, discard this packet......................................................................
                 if (record == null) {
                     return;
                 }
 
                 //TODO The values here seem wrong
-               // int txPower = -65;//record.getTxPowerLevel();
-                int txPower = -65;//record.getTxPowerLevel();
-                int rssi = result.getRssi();
+                txPower = -67;//record.getTxPowerLevel();
+               // txPower = record.getTxPowerLevel(); //changed fro -65 to -75
+
+                rssi = result.getRssi();
 
                 BluetoothDevice device = result.getDevice();
 
-                String deviceAddress = device.getAddress();
+                deviceAddress = device.getAddress();
 
                 Log.i(LOG_TAG, "Found device with rssi=" + rssi + " txPower="+txPower);
 
@@ -97,6 +105,7 @@ public class BleScanner {
                 if (hashOfUUIDCached != null) {
                     Log.i(LOG_TAG, "Address seen already: " + deviceAddress + " New distance: " + distance);
                     beaconCache.addReceivedBroadcast(hashOfUUIDCached, distance);
+
                 } else {
 
                     //Only start connection for the same device max every 5 sec so that we don't .......................................
@@ -110,20 +119,28 @@ public class BleScanner {
                             @Override
                             public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
                                 Log.i(LOG_TAG, "State changed to " + newState);
-                                if (newState == BluetoothGatt.STATE_CONNECTED) {
+                                if (newState == BluetoothGatt.STATE_CONNECTED&& status==BluetoothGatt.GATT_SUCCESS) { // added GATT_SUCCESS
                                     gatt.discoverServices();
 
+                                }else if(status!=BluetoothGatt.GATT_SUCCESS){ // added this guy
+
+                                    gatt.disconnect();
                                 }
                             }
 
                             @Override
                             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                                 Log.i(LOG_TAG, "Characteristic read " + characteristic.getUuid());
-                                if (characteristic.getUuid().compareTo(BandemicProfile.HASH_OF_UUID) == 0) {
-                                    byte[] hashOfUUID = characteristic.getValue();
+                                if (characteristic.getUuid().compareTo(HASH_OF_UUID) == 0) {
+                                   byte[] hashOfUUID = characteristic.getValue();     // Bhora riripano...byte array rahakwa
+                                   // byte[] hashOfUUID=record.getServiceData(new ParcelUuid(BandemicProfile.BANDEMIC_SERVICE));
                                     Log.i(LOG_TAG, "Read hash of uuid characteristic: " + bytesToHex(hashOfUUID));
-                                    macAddressCache.put(deviceAddress, hashOfUUID);
+                                    macAddressCache.put(deviceAddress, hashOfUUID);   // using mac address we input hash into map-bruce
                                     beaconCache.addReceivedBroadcast(hashOfUUID, distance);
+                                    gatt.setCharacteristicNotification(characteristic,true); // not sure if it is right to add this guy-bruce
+                                    BluetoothGattDescriptor desc=characteristic.getDescriptor(null); // are these necessary..if it fails try changing HASH_OF_UUID to BANDEMIC_SERVICE
+                                    desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);// // are these necessary..
+                                    gatt.writeDescriptor(desc); // // are these necessary..
                                     gatt.close();
                                 }
                             }
@@ -131,7 +148,7 @@ public class BleScanner {
                             @Override
                             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                                 Log.i(LOG_TAG, "Services Discovered");
-                                BluetoothGattCharacteristic characteristic = gatt.getService(BandemicProfile.BANDEMIC_SERVICE).getCharacteristic(BandemicProfile.HASH_OF_UUID);
+                                BluetoothGattCharacteristic characteristic = gatt.getService(BandemicProfile.BANDEMIC_SERVICE).getCharacteristic(HASH_OF_UUID);
                                 if (characteristic != null) {
                                     Log.i(LOG_TAG, "Read characteristic...");
                                     gatt.readCharacteristic(characteristic);
@@ -149,8 +166,22 @@ public class BleScanner {
                                     gatt.close();
                                 }
                             }
+
+                            @Override
+                            public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+
+                                super.onCharacteristicChanged(gatt, characteristic);
+                                if (characteristic.getUuid().compareTo(HASH_OF_UUID) == 0) {
+                                    byte[] hashOfUUID = characteristic.getValue();     // Bhora riripano...byte array rahakwa
+                                    Log.i(LOG_TAG, "Read hash of uuid characteristic: " + bytesToHex(hashOfUUID));
+                                    macAddressCache.put(deviceAddress, hashOfUUID);   // using mac address we input hash into map-bruce
+                                    beaconCache.addReceivedBroadcast(hashOfUUID, distance);
+                                    gatt.setCharacteristicNotification(characteristic,true);}
+
+
+                            }
                         };
-                        device.connectGatt(context, false, gattCallback);
+                        device.connectGatt(context, true, gattCallback); // CHANGED FROM FALSE TO TRUE
                     }
                 }
 
@@ -177,6 +208,14 @@ public class BleScanner {
         }
 
         bluetoothLeScanner.startScan(Collections.singletonList(filter), settingsBuilder.build(), bluetoothScanCallback);
+    }
+
+    public static byte getTxPower() {
+        return (byte)txPower;
+    }
+
+    public static int getRssi() {
+        return rssi;
     }
 
     public void stopScanning() {

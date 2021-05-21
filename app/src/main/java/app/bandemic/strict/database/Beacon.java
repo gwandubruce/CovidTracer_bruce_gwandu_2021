@@ -36,7 +36,7 @@ public class Beacon {
         this.distance = distance;
     }
 // constructor added kuti code isaputike...........................................................
-    public Beacon(byte[] hash, Date date, int duration) {
+    public Beacon(byte[] hash, Date date, double distance) {
 
         this.receivedHash = hash;
         MessageDigest digest;
@@ -48,7 +48,7 @@ public class Beacon {
         }
         this.receivedDoubleHash = digest.digest(receivedHash);
         this.timestamp = date;
-        this.duration = duration;
+        this.distance = distance;
 
     }
 }

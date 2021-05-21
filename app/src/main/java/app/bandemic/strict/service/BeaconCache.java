@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import app.bandemic.strict.database.Beacon;
-import app.bandemic.strict.repository.BroadcastRepository;
+import app.bandemic.strict.database.Beacon; // entity class
+import app.bandemic.strict.repository.BroadcastRepository; // broadcast repo
 import okio.ByteString;
 
 public class BeaconCache {
@@ -21,9 +21,9 @@ public class BeaconCache {
 
     private final BroadcastRepository broadcastRepository;
     private final Handler serviceHandler;
-    private final Map<ByteString, CacheEntry> cache = new HashMap<>();//------------------------------------------------
+    private final Map<ByteString, CacheEntry> cache = new HashMap<>();//-----------------------------------------------------------
 
-    private List<NearbyDevicesListener> nearbyDevicesListeners = new ArrayList<>();//-----------------------------
+    private List<NearbyDevicesListener> nearbyDevicesListeners = new ArrayList<>();//-----------------------------------------------
 
     public List<NearbyDevicesListener> getNearbyDevicesListeners() {
         return nearbyDevicesListeners;
@@ -56,15 +56,22 @@ public class BeaconCache {
     }
 
     public void addReceivedBroadcast(byte[] hash, double distance) {
+        broadcastRepository.insertBeacon(new Beacon(     // performed drastic changes here
+                hash,
+                new Date(System.currentTimeMillis()),
+
+                distance
+        ));
         ByteString hashString = ByteString.of(hash);
         CacheEntry entry = cache.get(hashString);
 
         if (entry == null) {
             // new unknown broadcast
             entry = new CacheEntry();
-            cache.put(hashString, entry);
+            cache.put(hashString, entry); // PLACED IT RIGHT AT THE BOTTOM
             entry.hash = hash;
             entry.firstReceived = System.currentTimeMillis();
+           // cache.put(hashString, entry);
         }
 
         entry.lastReceived = System.currentTimeMillis();

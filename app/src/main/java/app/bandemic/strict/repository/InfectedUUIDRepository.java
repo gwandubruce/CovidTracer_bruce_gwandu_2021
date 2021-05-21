@@ -2,6 +2,7 @@ package app.bandemic.strict.repository;
 
 import android.app.Application;
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -73,59 +74,9 @@ public class InfectedUUIDRepository {
     public LiveData<List<Infection>> getPossiblyInfectedEncounters() {
         return infectedUUIDDao.getPossiblyInfectedEncounters();
     }
-// method to get ids from api continuously..............................................WE NEED TO MODIFY HERE AND RETRIEVE FROM THE FIREBASE DB
-//    public void refreshInfectedUUIDs() {
-//        webservice.getInfectedUUIDResponse().enqueue(new Callback<InfectedUUIDResponse>() {
-//            @Override
-//            public void onResponse(Call<InfectedUUIDResponse> call, Response<InfectedUUIDResponse> response) {
-//                AppDatabase.databaseWriteExecutor.execute(() -> {
-//                    if(response.body() != null) {
-//                        infectedUUIDDao.insertAll(response.body().data.toArray(new InfectedUUID[response.body().data.size()]));
-//                    }
-//                    else {
-//                        // TODO: error handling!
-//                        Log.e(LOG_TAG, "Invalid response from api");
-//                    }
-//
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(Call<InfectedUUIDResponse> call, Throwable t) {
-//                // TODO error handling
-//                //Log.e(LOG_TAG, t.getCause().getMessage());
-//                //Log.e(LOG_TAG, t.getMessage() + t.getStackTrace().toString());
-//            }
-//        });
-//    }
+
     public void refreshInfectedUUIDs() {
         ChildEventListener postListener = new ChildEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // Get Post object and use the values to update the UI
-////                OwnUUIDResponse post = dataSnapshot.getValue(OwnUUIDResponse.class);
-////                System.err.println("------------------------------------------------------------------------------------"+post.getData());
-//                List<OwnUUID> list = new ArrayList<>();
-//                dataSnapshot.getChildrenCount();
-//                //List<User> list= new ArrayList<User>();
-//                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
-//                    OwnUUIDResponse ownUUIDResponse = childDataSnapshot.getValue(OwnUUIDResponse.class);
-//                    list.addAll(ownUUIDResponse.data);
-//                }
-//
-//                System.out.println("--------xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
-//
-//                AppDatabase.databaseWriteExecutor.execute(() -> {
-//                    if(list != null) {
-//                        infectedUUIDDao.insertAll(list.toArray(new OwnUUID[list.size()]));
-//                    }
-//                    else {
-//                        // TODO: error handling!
-//                        Log.e(LOG_TAG, "Invalid response from api");
-//                    }
-//
-//                });
-//            }
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -133,10 +84,6 @@ public class InfectedUUIDRepository {
                 InfectedUUID infectedUUID;
                 ArrayList<ShellClass> shellClasses = new ArrayList<>();
                 List<InfectedUUID> listInfectedUUID = new ArrayList<>();
-
-               // snapshot.getChildrenCount();
-
-               // GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
 
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
 
@@ -153,7 +100,7 @@ public class InfectedUUIDRepository {
                 for (ShellClass c:shellClasses){
                     long least= Long.parseLong(c.getLeast());
                     long most= Long.parseLong(c.getMost());
-                    Date date = new Date();
+                    Date date = new Date(System.currentTimeMillis());
 
                     // Long most= ((Long) ((HashMap) ((Map) obj).get("ownUUID")).get("mostSignificantBits"));
                     ByteBuffer inputBuffer = ByteBuffer.wrap(new byte[/*Long.BYTES*/ 8 * 2]);
@@ -165,7 +112,7 @@ public class InfectedUUIDRepository {
                     try {
                         MessageDigest digest = MessageDigest.getInstance("SHA-256");
                         broadcastData = digest.digest(inputBuffer.array());
-                        broadcastData = Arrays.copyOf(broadcastData, 26);  // removed 27 ndikaisa 26 as it is the hash length
+                       // broadcastData = Arrays.copyOf(broadcastData, 26);  // removed 27 ndikaisa 26 as it is the hash length
                       //  broadcastData[26] = getTransmitPower();
                     } catch (NoSuchAlgorithmException e) {
                         Log.wtf(LOG_TAG, "Algorithm not found", e);
@@ -175,13 +122,13 @@ public class InfectedUUIDRepository {
                     infectedUUID = new InfectedUUID();
                     infectedUUID.hashedId=broadcastData;
                     infectedUUID.createdOn=date;
-                    infectedUUID.distrustLevel=8;
+                    infectedUUID.distrustLevel=0;
                     infectedUUID.icdCode="Positive";
                     listInfectedUUID.add(infectedUUID);
 
                 }
 
-//                System.out.println("--------xxxxxxxxxxxxxxxxWWWWWWWWWWWWWWWWWWWWWWxxxXXXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx----------------------"+list);
+
 
                 AppDatabase.databaseWriteExecutor.execute(() -> {
 
@@ -205,9 +152,6 @@ public class InfectedUUIDRepository {
                 ArrayList<ShellClass> shellClasses = new ArrayList<>();
                 List<InfectedUUID> listInfectedUUID = new ArrayList<>();
 
-                // snapshot.getChildrenCount();
-
-                // GenericTypeIndicator<ArrayList<Object>> t = new GenericTypeIndicator<ArrayList<Object>>() {};
 
                 for (DataSnapshot childDataSnapshot : snapshot.getChildren()) {
 
